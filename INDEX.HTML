@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Registration Form Validation</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-slate-100 flex items-center justify-center min-h-screen p-4">
+
+    <!-- Registration Card -->
+    <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md border border-slate-200">
+        <h2 class="text-2xl font-bold text-slate-800 mb-6 text-center">Create an Account</h2>
+
+        <form id="registerForm" class="space-y-4" novalidate>
+
+            <!-- Name Field -->
+            <div>
+                <label for="name" class="block text-sm font-semibold text-slate-700 mb-1">Name</label>
+                <input type="text" id="name" placeholder="John Doe"
+                    class="w-full px-3 py-2 border border-slate-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-400 text-slate-800 transition" />
+                <p id="nameError" class="text-xs text-red-500 font-medium mt-1 hidden">Name is required.</p>
+            </div>
+
+            <!-- Email Field -->
+            <div>
+                <label for="email" class="block text-sm font-semibold text-slate-700 mb-1">Email</label>
+                <input type="email" id="email" placeholder="example@mail.com"
+                    class="w-full px-3 py-2 border border-slate-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-400 text-slate-800 transition" />
+                <p id="emailError" class="text-xs text-red-500 font-medium mt-1 hidden">Please enter a valid email
+                    address.</p>
+            </div>
+
+            <!-- Password Field -->
+            <div>
+                <label for="password" class="block text-sm font-semibold text-slate-700 mb-1">Password</label>
+                <input type="password" id="password" placeholder="••••••••"
+                    class="w-full px-3 py-2 border border-slate-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-400 text-slate-800 transition" />
+                <p id="passwordError" class="text-xs text-red-500 font-medium mt-1 hidden">Password must be at least 6
+                    characters long.</p>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" id="submitBtn" disabled
+                class="w-full mt-2 bg-indigo-600 text-white font-semibold py-2 rounded transition disabled:bg-slate-300 disabled:cursor-not-allowed hover:bg-indigo-700">
+                Register
+            </button>
+
+        </form>
+    </div>
+
+    <!-- Real-Time Validation Logic -->
+    <script>
+        const nameInput = document.getElementById('name');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const submitBtn = document.getElementById('submitBtn');
+
+        const nameError = document.getElementById('nameError');
+        const emailError = document.getElementById('emailError');
+        const passwordError = document.getElementById('passwordError');
+
+        // Email regex pattern for validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        // Helper function to set visual error state on an element
+        function toggleError(inputEl, errorEl, isInvalid) {
+            if (isInvalid) {
+                errorEl.classList.remove('hidden');
+                inputEl.classList.add('border-red-500', 'focus:ring-red-400');
+                inputEl.classList.remove('focus:ring-indigo-400');
+            } else {
+                errorEl.classList.add('hidden');
+                inputEl.classList.remove('border-red-500', 'focus:ring-red-400');
+                inputEl.classList.add('focus:ring-indigo-400');
+            }
+        }
+
+        // Main validation function
+        function validateForm() {
+            const nameVal = nameInput.value.trim();
+            const emailVal = emailInput.value.trim();
+            const passwordVal = passwordInput.value;
+
+            // Rule 1: Name is not empty
+            const isNameValid = nameVal.length > 0;
+
+            // Rule 2: Email format is correct
+            const isEmailValid = emailRegex.test(emailVal);
+
+            // Rule 3: Password is at least 6 characters long
+            const isPasswordValid = passwordVal.length >= 6;
+
+            // Update UI error messages (only display errors if input has been touched/typed into)
+            if (nameInput.dataset.touched) toggleError(nameInput, nameError, !isNameValid);
+            if (emailInput.dataset.touched) toggleError(emailInput, emailError, !isEmailValid);
+            if (passwordInput.dataset.touched) toggleError(passwordInput, passwordError, !isPasswordValid);
+
+            // Disable/Enable Submit Button based on all fields passing validation
+            const isFormValid = isNameValid && isEmailValid && isPasswordValid;
+            submitBtn.disabled = !isFormValid;
+        }
+
+        // Add input listeners to track user actions
+        [nameInput, emailInput, passwordInput].forEach(input => {
+            input.addEventListener('input', () => {
+                input.dataset.touched = 'true'; // Mark as interacted on first keypress
+                validateForm();
+            });
+        });
+
+        // Form submission event
+        document.getElementById('registerForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('Registration successful!');
+        });
+    </script>
+
+</body>
+
+</html>
